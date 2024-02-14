@@ -1,12 +1,5 @@
 #include "msgFormat.h"
-
+#include "IMServer.h"
 using namespace std;
 
-void callback(){
-
-}
-
-int main()
-{
-    
-}
+IMServer* IMServer::singleInstance=new IMServer();
