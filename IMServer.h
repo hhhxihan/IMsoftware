@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <functional>
+#include "./Model/userModel.hpp"
 using namespace std;
 using HandleFunc=function<void(struct bufferevnet* &bev,json &js)>;
 
@@ -14,18 +15,24 @@ class IMServer{
             }
             return singleInstance;
         }
-        void LoginHandler(struct bufferevnet* &bev,json &js);
-        void SignupHandler(struct bufferevnet* &bev,json &js);
+        void HandlerMsg(struct bufferevent* bev,void* arg);
+        void LoginHandler(struct bufferevnet* &bev);
+        void SignupHandler(struct bufferevnet* &bev);
+        void addFriendHandler(struct bufferevnet* &bev);
+        void addGroupHandler(struct bufferevent* &bev);
+        void sendMsgToFrdHdl(struct bufferevent* &bev);
+        void sendMsgToGrp(struct bufferevent* &bev);
+        void createGrpHdl(struct buffervent* &bev);
     private:
         static IMServer* singleInstance;
         unordered_map<int,HandleFunc> handlerMap; 
         unordered_map<int,struct bufferevnet*> userMap; //用户登录表
 
-
-
-
-
+        //数据库操作对象
+        userModel _userModel;
 
 };
 
 #endif
+
+

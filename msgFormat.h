@@ -15,14 +15,13 @@ enum CMD{
 };
 
 struct MSGHEAD{
-    
     char version;
     enum CMD command;
     int len;
 };
 
 struct SIGNUPmsg{
-    int userID;
+    char username[32];
     char pwd[32];
 
 }; //8
@@ -33,6 +32,8 @@ struct LOGINmsg{
 };
 
 struct SENDMSG{
+    int toID;
+    int fromID;
     int type; 
     char msg[128];
 };
