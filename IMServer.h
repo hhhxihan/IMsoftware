@@ -4,7 +4,18 @@
 #include <unordered_map>
 #include <functional>
 #include "./Model/userModel.hpp"
+#include "./Model/offlineMsgModel.hpp"
+#include "msgFormat.h"
+#include <iostream>
+#include <memory>
+#include "./bo/user.hpp"
+#include "./bo/offlineMsg.hpp"
+#include "./bo/friendMsg.hpp"
+#include "utils.cpp"
+
+#define MAXSIZE 1024
 using namespace std;
+
 using HandleFunc=function<void(struct bufferevnet* &bev,json &js)>;
 
 class IMServer{
@@ -29,7 +40,9 @@ class IMServer{
         unordered_map<int,struct bufferevnet*> userMap; //用户登录表
 
         //数据库操作对象
-        userModel _userModel;
+        userModel _userModel;  //用户信息数据库
+        offlineMsgModel _offlineMsgModel; //离线消息数据库
+
 
 };
 

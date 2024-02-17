@@ -4,7 +4,7 @@
 #include <stack>
 #include <mutex>
 #include <condition_variable>
-
+#define MAXSIZE 1024
 class DBconnPool{ //数据库连接池
 
 

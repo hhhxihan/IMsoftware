@@ -1,6 +1,6 @@
+
 #ifndef MSGFORMAT_H
 #define MSGFORMAT_H
-
 enum CMD{
     LOGIN=1000,
     SIGNUP,
@@ -31,7 +31,7 @@ struct LOGINmsg{
     char pwd[32];
 };
 
-struct SENDMSG{
+struct SENDMSG{ 
     int toID;
     int fromID;
     int type; 
@@ -39,7 +39,9 @@ struct SENDMSG{
 };
 
 struct ADDFreindmsg{
-
+    int userID;
+    int friendID;
+    int state;
 };
 
 
