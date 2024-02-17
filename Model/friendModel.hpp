@@ -7,7 +7,8 @@
 using namespace std;
 class friendModel{
     public:
-    bool update(string sql);
+    bool insert(friendMsg& _friendMsg);
+    bool update(friendMsg& _friendMsg);
     vector<user> query(int _userID);
 };
 

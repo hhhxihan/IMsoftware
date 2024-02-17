@@ -70,5 +70,9 @@ void IMServer::addFriendHandler(struct bufferevnet* &bev,MSGHEAD* msgHeadPtr){
     _friendMsg.setFriendID(frdMsgPtr->friendID);
     _friendMsg.setState(frdMsgPtr->state);
 
+    int _state=_friendModel.insert(_friendMsg);
+    if(!_state){
+        
+    }
 
 }

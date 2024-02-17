@@ -5,6 +5,7 @@
 #include <functional>
 #include "./Model/userModel.hpp"
 #include "./Model/offlineMsgModel.hpp"
+#include "./Model/friendModel.hpp"
 #include "msgFormat.h"
 #include <iostream>
 #include <memory>
@@ -42,6 +43,7 @@ class IMServer{
         //数据库操作对象
         userModel _userModel;  //用户信息数据库
         offlineMsgModel _offlineMsgModel; //离线消息数据库
+        friendModel _friendModel;
 
 
 };
