@@ -1,6 +1,9 @@
 
 class friendMsg{
+
     public:
+    int getID() const{ return id;}
+    void setID(int _id){ id=_id;};
         // Getter for userID
     int getUserID() const {
         return userID;
@@ -32,6 +35,7 @@ class friendMsg{
     }
 
     private:
+        int id;
         int userID;
         int friendID;
         int state; 

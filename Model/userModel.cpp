@@ -1,6 +1,6 @@
 #include "userModel.hpp"
 #include <cstdio>
-#define MAXSIZW 1024
+
 
 bool userModel::insert(user& _user){
     MYSQL_DB* conn=DBconnPool::instance()->getConn();

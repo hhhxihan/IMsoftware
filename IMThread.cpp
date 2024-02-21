@@ -2,8 +2,13 @@
 
 
 
-void IMThread::addTask(evutil_socket_t fd){
-    struct bufferevent* bev=bufferevent_socket_new(base,fd,BEV_OPT_CLOSE_ON_FREE);
+void IMThread::addTask(){
+    shared_ptr<char> buf=make_shared<char>(20);
+    char* bufptr=buf.get();
+    int len=read(pipefd[0],bufptr,20);
+    int* fdPtr=reinterpret_cast<int*>(bufptr);
+
+    struct bufferevent* bev=bufferevent_socket_new(base,*fdPtr,BEV_OPT_CLOSE_ON_FREE);
     if(!bev){
         cout<<"bufferevent create failed!"<<endl;
         return ;
@@ -13,12 +18,16 @@ void IMThread::addTask(evutil_socket_t fd){
 }
 
 bool IMThread::init(){
+    if(-1==pipe(pipefd)){
+        cout<<"pipe initalization failed!"<<endl;
+    }
     base=event_base_new();
     if(!base){
         cout<<"event_base create failed!"<<endl;
         return false;
     }
-
+    struct event* bev=event_new(base,pipefd[0],EV_READ,addTask,this);
+    event_add(bev,0);
     thread th(Main,this);
     th.detach();
 }

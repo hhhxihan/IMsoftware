@@ -2,6 +2,7 @@
 #define USERMODEL_HPP
 #include "../bo/user.hpp"
 #include "../DBconnPool.hpp"
+#define MAXSIZE 1024
 
 class userModel{
     public:

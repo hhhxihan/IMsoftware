@@ -72,7 +72,36 @@ void IMServer::addFriendHandler(struct bufferevnet* &bev,MSGHEAD* msgHeadPtr){
 
     int _state=_friendModel.insert(_friendMsg);
     if(!_state){
-        
+        cout<<"insert newfriend failed!"<<endl;
     }
+
+}
+
+void IMServer::getFriendMSg(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
+    shared_ptr<char> bufPtr=make_shared<char>(MAXSIZE);
+    char* buf=bufPtr.get();
+    readMsgPkg(bev,buf,msgHeadPtr);
+
+    GetFriendMsg* getFrdPtr=reinterpret_cast<GetFriendMsg*>(buf);
+    int id=getFrdPtr->userID;
+
+    vector<user> v=_friendModel.query(id);
+    json js,js2;
+    
+    js["vector"]=json::vector;
+    for(user &_user:v){
+        js2["userID"]=_user.getId();
+        js2["name"]=_user.getName().c_str;
+        js2["state"]=_user.getState();
+
+        js["vector"].push_base(js2.dump());
+    }
+    string s=js.dump();
+    msgHeadPtr->len=respondMsg.size();
+    
+    char* rspbuf=reinterpret_cast<char*>(msgHeadPtr);
+    string respondMsg=string(rspbuf);
+    respondMsg+=s;
+    bufferevent_write(bev,respondMsg.c_str(),respondMsg.size());
 
 }

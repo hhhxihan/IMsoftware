@@ -11,6 +11,7 @@ class IMThread{
     void addTask(evutil_socket_t fd);
     private:
         event_base* base;
+        int pipefd[2];
 
 };
 

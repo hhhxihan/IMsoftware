@@ -44,6 +44,10 @@ struct ADDFreindmsg{
     int state;
 };
 
+struct GetFriendMsg{
+    int userID;
+}
+
 
 
 #endif

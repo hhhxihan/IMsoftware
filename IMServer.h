@@ -35,6 +35,7 @@ class IMServer{
         void sendMsgToFrdHdl(struct bufferevent* &bev);
         void sendMsgToGrp(struct bufferevent* &bev);
         void createGrpHdl(struct buffervent* &bev);
+        void getFriendMSg(struct bufferevent* bev);
     private:
         static IMServer* singleInstance;
         unordered_map<int,HandleFunc> handlerMap; 
