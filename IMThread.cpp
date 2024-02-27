@@ -1,20 +1,23 @@
 #include "IMThread.hpp"
+#include "IMServer.h"
 
 
 
-void IMThread::addTask(){
+void IMThread::addTask(evutil_socket_t fd,short events,void* arg){
+    IMThread* t=reinterpret_cast<IMThread*>(arg);
+
     shared_ptr<char> buf=make_shared<char>(20);
     char* bufptr=buf.get();
-    int len=read(pipefd[0],bufptr,20);
+    int len=read(t->pipefd[0],bufptr,20);
     int* fdPtr=reinterpret_cast<int*>(bufptr);
 
-    struct bufferevent* bev=bufferevent_socket_new(base,*fdPtr,BEV_OPT_CLOSE_ON_FREE);
+    struct bufferevent* bev=bufferevent_socket_new(t->base,*fdPtr,BEV_OPT_CLOSE_ON_FREE);
     if(!bev){
         cout<<"bufferevent create failed!"<<endl;
         return ;
     }
     bufferevent_setcb(bev,IMServer::HandlerMsg,NULL,NULL,NULL);
-    bufferevnet_enable(bev,EV_READ);
+    bufferevent_enable(bev,EV_READ);
 }
 
 bool IMThread::init(){

@@ -5,7 +5,7 @@
 class offlineMsg{
     public:
     int toID;
-    int formID;
+    int fromID;
     int type;
     std::string Msg;
 

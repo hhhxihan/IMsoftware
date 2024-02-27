@@ -13,11 +13,15 @@
 #include "./bo/offlineMsg.hpp"
 #include "./bo/friendMsg.hpp"
 #include "utils.cpp"
-
+#include <event2/event.h>
+#include <event2/bufferevent.h>
+#include "json.hpp"
+using json=nlohmann::json;
+using namespace std::placeholders;
 #define MAXSIZE 1024
 using namespace std;
 
-using HandleFunc=function<void(struct bufferevnet* &bev,json &js)>;
+using HandleFunc=function<void(struct bufferevnet* bev,MSGHEAD* msgHeadPtr)>;
 
 class IMServer{
     public:
@@ -28,18 +32,19 @@ class IMServer{
             return singleInstance;
         }
         void HandlerMsg(struct bufferevent* bev,void* arg);
-        void LoginHandler(struct bufferevnet* &bev);
-        void SignupHandler(struct bufferevnet* &bev);
-        void addFriendHandler(struct bufferevnet* &bev);
-        void addGroupHandler(struct bufferevent* &bev);
-        void sendMsgToFrdHdl(struct bufferevent* &bev);
-        void sendMsgToGrp(struct bufferevent* &bev);
-        void createGrpHdl(struct buffervent* &bev);
-        void getFriendMSg(struct bufferevent* bev);
+        void LoginHandler(struct bufferevnet* bev,MSGHEAD* msgHeadPtr);
+        void SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
+        void addFriendHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
+        void addGroupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
+        void sendMsgToFrdHdl(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
+        void sendMsgToGrp(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
+        void createGrpHdl(struct buffervent* bev,MSGHEAD* msgHeadPtr);
+        void getFriendMSg(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
+        IMServer();
     private:
         static IMServer* singleInstance;
-        unordered_map<int,HandleFunc> handlerMap; 
-        unordered_map<int,struct bufferevnet*> userMap; //用户登录表
+        static unordered_map<int,HandleFunc> handlerMap; 
+        unordered_map<int,struct bufferevent*> userMap; //用户登录表
 
         //数据库操作对象
         userModel _userModel;  //用户信息数据库

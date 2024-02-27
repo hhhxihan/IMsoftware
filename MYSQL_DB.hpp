@@ -1,6 +1,9 @@
 #ifndef MYSQL_HPP
 #define MYSQL_HPP
 #include <mysql/mysql.h>
+#include <string>
+#include "DBconnPool.hpp"
+using namespace std;
 
 
 class MYSQL_DB{ //封装Mysql

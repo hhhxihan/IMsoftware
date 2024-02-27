@@ -1,12 +1,23 @@
 #include "IMServer.h"
 
+
+
 IMServer* IMServer::singleInstance=new IMServer();
+
+IMServer::IMServer(){ //将函数添加到哈希表中
+    handlerMap.emplace(LOGIN,bind(&IMServer::LoginHandler,this,_1,_2));
+    handlerMap.emplace(SIGNUP,bind(&IMServer::SignupHandler,this,_1,_2));
+    handlerMap.emplace(SIGNUP,bind(&IMServer::sendMsgToFrdHdl,this,_1,_2));
+    handlerMap.emplace(ADDFRIEND,bind(&IMServer::addFriendHandler,this,_1,_2));
+    handlerMap.emplace(SENDMSGTOF,bind(&IMServer::getFriendMSg,this,_1,_2));
+}
 
 
 void IMServer::HandlerMsg(struct bufferevent* bev,void* arg){
+
     shared_ptr<char> headData=make_shared<char>(sizeof(struct MSGHEAD)+1);
     char* charPtr = headData.get();
-    int headlen=bufferevnet_read(bev,headdata,sizeof(struct MSGHEAD));
+    int headlen=bufferevent_read(bev,charPtr,sizeof(struct MSGHEAD));
     if(headlen!=sizeof(struct MSGHEAD)){
         std::cout<<"head data recieve failed!";
     }
@@ -33,7 +44,7 @@ void IMServer::SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
     int _state=_userModel.insert(_user);
 }
 
-void IMServer::sendMsgToFrdHdl(struct bufferevent* &bev,MSGHEAD* msgHeadPtr){
+void IMServer::sendMsgToFrdHdl(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
     shared_ptr<char> bufPtr=make_shared<char>(MAXSIZE);
     char* buf=bufPtr.get();
     readMsgPkg(bev,buf,msgHeadPtr);
@@ -58,7 +69,7 @@ void IMServer::sendMsgToFrdHdl(struct bufferevent* &bev,MSGHEAD* msgHeadPtr){
     _offlineMsgModel.insert(_offlineMsg);
 }
 
-void IMServer::addFriendHandler(struct bufferevnet* &bev,MSGHEAD* msgHeadPtr){
+void IMServer::addFriendHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
     shared_ptr<char> bufPtr=make_shared<char>(MAXSIZE);
     char* buf=bufPtr.get();
     readMsgPkg(bev,buf,msgHeadPtr);
@@ -88,19 +99,20 @@ void IMServer::getFriendMSg(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
     vector<user> v=_friendModel.query(id);
     json js,js2;
     
-    js["vector"]=json::vector;
+    js["vector"]=json::array();
     for(user &_user:v){
         js2["userID"]=_user.getId();
-        js2["name"]=_user.getName().c_str;
+        js2["name"]=_user.getName().c_str();
         js2["state"]=_user.getState();
 
-        js["vector"].push_base(js2.dump());
+        js["vector"].push_back(js2.dump());
     }
     string s=js.dump();
-    msgHeadPtr->len=respondMsg.size();
+    
     
     char* rspbuf=reinterpret_cast<char*>(msgHeadPtr);
     string respondMsg=string(rspbuf);
+    msgHeadPtr->len=respondMsg.size();
     respondMsg+=s;
     bufferevent_write(bev,respondMsg.c_str(),respondMsg.size());
 

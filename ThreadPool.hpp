@@ -11,9 +11,8 @@ class ThreadPool{
     }
     bool addTask(evutil_socket_t fd);
     bool init(int num);
-
-    private:
     std::vector<IMThread*> threadPool;
+    private:
     int curNum;
     int maxNum;
 };

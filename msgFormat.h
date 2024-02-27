@@ -46,7 +46,7 @@ struct ADDFreindmsg{
 
 struct GetFriendMsg{
     int userID;
-}
+};
 
 
 
