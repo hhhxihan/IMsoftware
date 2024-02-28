@@ -30,6 +30,7 @@ bool DBconnPool::init(int num){
         } 
         connPool.push(db);
     }
+    cout<<"database init success!"<<endl;
     return true;
 }
 

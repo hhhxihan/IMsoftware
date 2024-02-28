@@ -7,17 +7,20 @@ IMServer* IMServer::singleInstance=new IMServer();
 IMServer::IMServer(){ //将函数添加到哈希表中
     handlerMap.insert(make_pair(LOGIN,std::bind(&IMServer::LoginHandler,this,std::placeholders::_1,std::placeholders::_2)));
     handlerMap.emplace(make_pair(SIGNUP,bind(&IMServer::SignupHandler,this,std::placeholders::_1,std::placeholders::_2)));
-    handlerMap.emplace(make_pair(SIGNUP,bind(&IMServer::sendMsgToFrdHdl,this,std::placeholders::_1,std::placeholders::_2)));
+    handlerMap.emplace(make_pair(SENDMSGTOF,bind(&IMServer::sendMsgToFrdHdl,this,std::placeholders::_1,std::placeholders::_2)));
     handlerMap.emplace(make_pair(ADDFRIEND,bind(&IMServer::addFriendHandler,this,std::placeholders::_1,std::placeholders::_2)));
     handlerMap.emplace(make_pair(SENDMSGTOF,bind(&IMServer::getFriendMSg,this,std::placeholders::_1,std::placeholders::_2)));
 }
 
 
 void IMServer::HandlerMsg(struct bufferevent* bev,void* arg){
-
-    shared_ptr<char> headData=make_shared<char>(sizeof(struct MSGHEAD)+1);
-    char* charPtr = headData.get();
+    int len=sizeof(struct MSGHEAD)+1;
+    // auto headData=make_shared<char[]>(len); g++20
+    char* charPtr = new char[maxsize];
     int headlen=bufferevent_read(bev,charPtr,sizeof(struct MSGHEAD));
+    charPtr[headlen]='\0';
+    cout<<charPtr<<endl;
+
     if(headlen!=sizeof(struct MSGHEAD)){
         std::cout<<"head data recieve failed!";
     }
@@ -30,27 +33,44 @@ void IMServer::HandlerMsg(struct bufferevent* bev,void* arg){
     else{
         cout<<"command errno"<<endl;
     }
+    delete[] charPtr;
 }
 void IMServer::LoginHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
-  
+  cout<<"handler Login msg"<<endl;
 }
 
 
 void IMServer::SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
-    shared_ptr<char> bufPtr=make_shared<char>(MAXSIZE);
-    char* buf=bufPtr.get();
-    readMsgPkg(bev,buf,msgHeadPtr);
-    SIGNUPmsg* signupPtr=reinterpret_cast<SIGNUPmsg*>(buf);
-    user _user;
-    _user.setName(signupPtr->username);
-    _user.setPassword(signupPtr->pwd);
+    cout<<"handler signup msg"<<endl;
+    try {
+        // auto bufPtr = std::shared_ptr<char[size2]>(); //C++20 以上支持
+        char* buf = new char[100];
+        if(buf==nullptr){
+            cout<<"IMServer.cpp 47:create buf failed"<<endl;
+        }
+        cout<<"buf ???"<<endl;
+        readMsgPkg(bev,buf,msgHeadPtr);
 
-    int _state=_userModel.insert(_user);
+        SIGNUPmsg* signupPtr=reinterpret_cast<SIGNUPmsg*>(buf);
+        user _user;
+        _user.setName(signupPtr->username);
+        _user.setPassword(signupPtr->pwd);
+
+        int _state=_userModel.insert(_user);
+        if(_state){
+            cout<<"Signup success : username:"<<_user.getName()<<endl;
+        }
+        delete[] buf;
+    }
+    catch (const std::bad_alloc& e) {
+        cout << "IMServer.cpp: create buf failed: " << e.what() << endl;
+    }
+    
 }
 
 void IMServer::sendMsgToFrdHdl(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
-    shared_ptr<char> bufPtr=make_shared<char>(MAXSIZE);
-    char* buf=bufPtr.get();
+    // auto bufPtr=make_shared<char[]>(maxsize); g++20
+    char* buf=new char[maxsize];
     readMsgPkg(bev,buf,msgHeadPtr);
 
     struct SENDMSG* _sendMsgPtr=reinterpret_cast<SENDMSG*>(buf);
@@ -62,7 +82,7 @@ void IMServer::sendMsgToFrdHdl(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
 
         return ;
     }
-
+    delete[] buf;
     //否则要存储到数据库
     offlineMsg _offlineMsg;
     _offlineMsg.toID=_sendMsgPtr->toID;
@@ -74,8 +94,8 @@ void IMServer::sendMsgToFrdHdl(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
 }
 
 void IMServer::addFriendHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
-    shared_ptr<char> bufPtr=make_shared<char>(MAXSIZE);
-    char* buf=bufPtr.get();
+    // auto bufPtr=make_shared<char[]>(maxsize);
+    char* buf=new char[maxsize];
     readMsgPkg(bev,buf,msgHeadPtr);
 
     ADDFreindmsg* frdMsgPtr=reinterpret_cast<ADDFreindmsg*>(buf);
@@ -89,12 +109,12 @@ void IMServer::addFriendHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
     if(!_state){
         cout<<"insert newfriend failed!"<<endl;
     }
-
+    delete[] buf;
 }
 
 void IMServer::getFriendMSg(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
-    shared_ptr<char> bufPtr=make_shared<char>(MAXSIZE);
-    char* buf=bufPtr.get();
+    // auto bufPtr=make_shared<char[]>(maxsize);
+    char* buf=new char[maxsize];
     readMsgPkg(bev,buf,msgHeadPtr);
 
     GetFriendMsg* getFrdPtr=reinterpret_cast<GetFriendMsg*>(buf);
@@ -119,7 +139,7 @@ void IMServer::getFriendMSg(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
     msgHeadPtr->len=respondMsg.size();
     respondMsg+=s;
     bufferevent_write(bev,respondMsg.c_str(),respondMsg.size());
-
+    delete[] buf;
 }
 
 

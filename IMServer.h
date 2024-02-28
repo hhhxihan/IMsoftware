@@ -22,6 +22,7 @@ using namespace std;
 #define MAXSIZE
 const int maxsize=1024;
 #endif
+const int size2=100;
 class IMServer;
 using HandleFunc=std::function<void(struct bufferevent*,MSGHEAD*)>;
 

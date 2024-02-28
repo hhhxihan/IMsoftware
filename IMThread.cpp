@@ -4,19 +4,20 @@
 
 
 void IMThread::addTask(evutil_socket_t fd,short events,void* arg){
+    
     IMThread* t=reinterpret_cast<IMThread*>(arg);
 
-    shared_ptr<char> buf=make_shared<char>(20);
-    char* bufptr=buf.get();
-    int len=read(t->pipefd[0],bufptr,20);
-    int* fdPtr=reinterpret_cast<int*>(bufptr);
+    int sockfd=t->fdStack.top(); //线程安全
+    t->fdStack.pop();
+    if(sockfd==0){
+        cout<<"sockfd is null"<<endl;
+    }
 
-    struct bufferevent* bev=bufferevent_socket_new(t->base,*fdPtr,BEV_OPT_CLOSE_ON_FREE);
+    struct bufferevent* bev=bufferevent_socket_new(t->base,sockfd,BEV_OPT_CLOSE_ON_FREE);
     if(!bev){
         cout<<"bufferevent create failed!"<<endl;
         return ;
     }
-    // IMServer* t=IMServer::instance();
     bufferevent_setcb(bev,IMServer::HandlerMsg,NULL,NULL,NULL);
     bufferevent_enable(bev,EV_READ);
 }
@@ -27,6 +28,7 @@ void IMThread::Main(){
 }
 
 bool IMThread::init(){
+    fdStack=stack<int>();
     if(-1==pipe(pipefd)){
         cout<<"pipe initalization failed!"<<endl;
     }

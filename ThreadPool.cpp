@@ -18,8 +18,8 @@ bool ThreadPool::addTask(evutil_socket_t fd){
     curNum=(curNum+1)%maxNum;
     //向Thread发送信息，激活线程回调事件，线程自己调用addTask;
     int pipefd=threadPool[curNum]->pipefd[1];
-   
-    string ts=std::to_string(pipefd);
+    threadPool[curNum]->fdStack.push(fd);
+    string ts=std::to_string(fd);
     write(pipefd,ts.c_str(),ts.size());
 
     return true;
