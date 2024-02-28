@@ -10,4 +10,4 @@ add_executable(${PROJECT_NAME} DBconnPool.cpp IMThread.cpp ThreadPool.cpp utils.
 
 
 # 添加 libevent 的链接库
-target_link_libraries(${PROJECT_NAME} PRIVATE -levent  stdc++fs)
+target_link_libraries(${PROJECT_NAME} PRIVATE -levent  stdc++fs  mysqlclient )

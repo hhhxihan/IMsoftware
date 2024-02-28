@@ -10,3 +10,12 @@ bool MYSQL_DB::connect(const char* host,const char* user,const char* password,co
     }
     return  true;
 }
+
+MYSQL_RES* MYSQL_DB::query(string sql){
+
+}
+
+
+bool MYSQL_DB::update(string sql){
+
+}

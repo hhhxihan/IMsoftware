@@ -5,11 +5,11 @@
 IMServer* IMServer::singleInstance=new IMServer();
 
 IMServer::IMServer(){ //将函数添加到哈希表中
-    handlerMap.emplace(LOGIN,bind(&IMServer::LoginHandler,this,_1,_2));
-    handlerMap.emplace(SIGNUP,bind(&IMServer::SignupHandler,this,_1,_2));
-    handlerMap.emplace(SIGNUP,bind(&IMServer::sendMsgToFrdHdl,this,_1,_2));
-    handlerMap.emplace(ADDFRIEND,bind(&IMServer::addFriendHandler,this,_1,_2));
-    handlerMap.emplace(SENDMSGTOF,bind(&IMServer::getFriendMSg,this,_1,_2));
+    handlerMap.insert(make_pair(LOGIN,std::bind(&IMServer::LoginHandler,this,std::placeholders::_1,std::placeholders::_2)));
+    handlerMap.emplace(make_pair(SIGNUP,bind(&IMServer::SignupHandler,this,std::placeholders::_1,std::placeholders::_2)));
+    handlerMap.emplace(make_pair(SIGNUP,bind(&IMServer::sendMsgToFrdHdl,this,std::placeholders::_1,std::placeholders::_2)));
+    handlerMap.emplace(make_pair(ADDFRIEND,bind(&IMServer::addFriendHandler,this,std::placeholders::_1,std::placeholders::_2)));
+    handlerMap.emplace(make_pair(SENDMSGTOF,bind(&IMServer::getFriendMSg,this,std::placeholders::_1,std::placeholders::_2)));
 }
 
 
@@ -21,16 +21,20 @@ void IMServer::HandlerMsg(struct bufferevent* bev,void* arg){
     if(headlen!=sizeof(struct MSGHEAD)){
         std::cout<<"head data recieve failed!";
     }
-    
+    IMServer* t=IMServer::instance();
     MSGHEAD* msgHeadPtr = reinterpret_cast<MSGHEAD*>(charPtr);
-    if(handlerMap.find(static_cast<int>(msgHeadPtr->command))!=handlerMap.end()){
-        auto handler=handlerMap[static_cast<int>(msgHeadPtr->command)];
+    if(t->handlerMap.find((msgHeadPtr->command))!=t->handlerMap.end()){
+        auto handler=t->handlerMap[(msgHeadPtr->command)];
         handler(bev,msgHeadPtr);
     }
     else{
         cout<<"command errno"<<endl;
     }
 }
+void IMServer::LoginHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
+  
+}
+
 
 void IMServer::SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
     shared_ptr<char> bufPtr=make_shared<char>(MAXSIZE);
@@ -115,5 +119,17 @@ void IMServer::getFriendMSg(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
     msgHeadPtr->len=respondMsg.size();
     respondMsg+=s;
     bufferevent_write(bev,respondMsg.c_str(),respondMsg.size());
+
+}
+
+
+void IMServer::addGroupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
+
+}
+
+void IMServer::sendMsgToGrp(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
+
+}
+void IMServer::createGrpHdl(struct buffervent* bev,MSGHEAD* msgHeadPtr){
 
 }

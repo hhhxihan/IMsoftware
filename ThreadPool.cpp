@@ -11,6 +11,7 @@ bool ThreadPool::init(int num){
         }
         ptr->init();
     }
+    return true;
 }
 
 bool ThreadPool::addTask(evutil_socket_t fd){
