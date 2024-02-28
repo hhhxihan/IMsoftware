@@ -20,5 +20,7 @@ bool ThreadPool::addTask(evutil_socket_t fd){
    
     string ts=std::to_string(pipefd);
     write(pipefd,ts.c_str(),ts.size());
+
+    return true;
 }
 

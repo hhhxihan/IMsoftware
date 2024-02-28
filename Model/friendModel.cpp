@@ -1,7 +1,7 @@
 #include "friendModel.hpp"
 #include "../DBconnPool.hpp"
 bool friendModel::insert(friendMsg& _friendMsg){
-    char sql[MAXSIZE];
+    char sql[maxsize];
     sprintf(sql,"insert into friend(userID,friendID,state) values(%d,%d,%d)",_friendMsg.getUserID(),_friendMsg.getFriendID(),_friendMsg.getState());
     MYSQL_DB* conn=DBconnPool::instance()->getConn();
     bool state=conn->update(sql);
@@ -18,7 +18,7 @@ bool friendModel::insert(friendMsg& _friendMsg){
 }
 
 vector<user> friendModel::query(int _id){
-    char sql[MAXSIZE];
+    char sql[maxsize];
     sprintf(sql,"select B.id,B.name,B.state from friend A inner join user B ON A.friendID=B.id where A.userID=%d",_id);
     vector<user> v;
     MYSQL_DB* conn=DBconnPool::instance()->getConn();

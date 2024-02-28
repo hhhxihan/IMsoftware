@@ -1,4 +1,5 @@
-
+#ifndef FRIENDMSG_HPP
+#define FRIENDMSG_HPP
 class friendMsg{
 
     public:
@@ -40,3 +41,4 @@ class friendMsg{
         int friendID;
         int state; 
 };
+#endif

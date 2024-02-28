@@ -7,7 +7,10 @@
 #include <condition_variable>
 using namespace std;
 
-const int MAXSIZE=1024;
+#ifndef MAXSIZE
+#define MAXSIZE
+const int maxsize=1024;
+#endif
 class DBconnPool{ //数据库连接池
 
 

@@ -21,6 +21,11 @@ void IMThread::addTask(evutil_socket_t fd,short events,void* arg){
     bufferevent_enable(bev,EV_READ);
 }
 
+void IMThread::Main(){
+    event_base_dispatch(base);
+    event_base_free(base);
+}
+
 bool IMThread::init(){
     if(-1==pipe(pipefd)){
         cout<<"pipe initalization failed!"<<endl;
@@ -33,11 +38,9 @@ bool IMThread::init(){
     
     struct event* bev=event_new(base,pipefd[0],EV_READ,addTask,this);
     event_add(bev,0);
-    thread th(Main,this);
+    thread th(&IMThread::Main,this);
     th.detach();
+
+    return true;
 }
 
-void IMThread::Main(){
-    event_base_dispatch(base);
-    event_base_free(base);
-}

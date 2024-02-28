@@ -18,8 +18,11 @@
 #include "json.hpp"
 using json=nlohmann::json;
 using namespace std::placeholders;
-#define MAXSIZE 1024
 using namespace std;
+#ifndef MAXSIZE
+#define MAXSIZE
+const int maxsize=1024;
+#endif
 
 using HandleFunc=function<void(struct bufferevent* bev,MSGHEAD* msgHeadPtr)>;
 

@@ -2,9 +2,14 @@
 #define FRIENDMODEL_HPP
 #include "../bo/friendMsg.hpp"
 #include <string>
-#define MAXSIZE 1024
 #include "../bo/user.hpp"
 #include <vector>
+
+#ifndef MAXSIZE
+#define MAXSIZE
+const int maxsize=1024;
+#endif
+
 using namespace std;
 class friendModel{
     public:
@@ -14,3 +19,4 @@ class friendModel{
 };
 
 #endif
+
