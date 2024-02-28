@@ -16,6 +16,7 @@ void IMThread::addTask(evutil_socket_t fd,short events,void* arg){
         cout<<"bufferevent create failed!"<<endl;
         return ;
     }
+    // IMServer* t=IMServer::instance();
     bufferevent_setcb(bev,IMServer::HandlerMsg,NULL,NULL,NULL);
     bufferevent_enable(bev,EV_READ);
 }
@@ -29,6 +30,7 @@ bool IMThread::init(){
         cout<<"event_base create failed!"<<endl;
         return false;
     }
+    
     struct event* bev=event_new(base,pipefd[0],EV_READ,addTask,this);
     event_add(bev,0);
     thread th(Main,this);

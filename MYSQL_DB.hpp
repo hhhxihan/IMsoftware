@@ -2,9 +2,8 @@
 #define MYSQL_HPP
 #include <mysql/mysql.h>
 #include <string>
-#include "DBconnPool.hpp"
 using namespace std;
-
+class DBconnPool;
 
 class MYSQL_DB{ //封装Mysql
     public:

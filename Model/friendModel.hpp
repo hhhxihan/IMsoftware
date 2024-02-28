@@ -10,7 +10,7 @@ class friendModel{
     public:
     bool insert(friendMsg& _friendMsg);
     bool update(friendMsg& _friendMsg);
-    vector<user> query(int _userID);
+    vector<user> query(int _id);
 };
 
 #endif

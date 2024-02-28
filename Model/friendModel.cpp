@@ -10,16 +10,16 @@ bool friendModel::insert(friendMsg& _friendMsg){
     }
 
     sprintf(sql,"insert into friend(userID,friendID,state) values(%d,%d,%d)",_friendMsg.getFriendID(),_friendMsg.getUserID(),_friendMsg.getState());
-    bool conn->update(sql);
+    conn->update(sql);
     if(!state){
         cout<<"insert failed"<<endl;
     }
     DBconnPool::instance()->giveBack(conn);
 }
 
-vector<user> friendModel::query(user& _user){
+vector<user> friendModel::query(int _id){
     char sql[MAXSIZE];
-    sprintf(sql,"select B.id,B.name,B.state from friend A inner join user B ON A.friendID=B.id where A.userID=%d",_user.getId());
+    sprintf(sql,"select B.id,B.name,B.state from friend A inner join user B ON A.friendID=B.id where A.userID=%d",_id);
     vector<user> v;
     MYSQL_DB* conn=DBconnPool::instance()->getConn();
     MYSQL_RES* res=conn->query(sql);

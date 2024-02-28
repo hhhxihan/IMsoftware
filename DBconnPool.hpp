@@ -2,9 +2,12 @@
 #define DBCONNPOOL_HPP
 #include "MYSQL_DB.hpp"
 #include <stack>
+#include <iostream>
 #include <mutex>
 #include <condition_variable>
-#define MAXSIZE 1024
+using namespace std;
+
+const int MAXSIZE=1024;
 class DBconnPool{ //数据库连接池
 
 
@@ -16,12 +19,12 @@ class DBconnPool{ //数据库连接池
 
     
     void setServer(string serverIP,string username,string password,unsigned int port);
-    MYSQL_DB*& getConn();
-    void giveBack(MYSQL_DB* &db);
+    MYSQL_DB* getConn();
+    void giveBack(MYSQL_DB* db);
     void close();
     
     protected:
-    std::stack<MYSQL*> connPool; //存储数据库的连接
+    std::stack<MYSQL_DB*> connPool; //存储数据库的连接
     int _connNum; //连接的数量
     bool is_shutdown;
 

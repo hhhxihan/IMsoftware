@@ -21,7 +21,7 @@ using namespace std::placeholders;
 #define MAXSIZE 1024
 using namespace std;
 
-using HandleFunc=function<void(struct bufferevnet* bev,MSGHEAD* msgHeadPtr)>;
+using HandleFunc=function<void(struct bufferevent* bev,MSGHEAD* msgHeadPtr)>;
 
 class IMServer{
     public:
@@ -31,7 +31,7 @@ class IMServer{
             }
             return singleInstance;
         }
-        void HandlerMsg(struct bufferevent* bev,void* arg);
+        static void HandlerMsg(struct bufferevent* bev,void* arg);
         void LoginHandler(struct bufferevnet* bev,MSGHEAD* msgHeadPtr);
         void SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
         void addFriendHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
