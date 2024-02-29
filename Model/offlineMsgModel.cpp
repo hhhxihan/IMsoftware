@@ -4,7 +4,7 @@
 
 bool offlineMsgModel::insert(offlineMsg& _msg){
     char sql[maxsize];
-    sprintf(sql,"insert into offlineMsg(toID,fromID,type,msg) values(%d,%d,%d,'%s',);",_msg.getToID(),_msg.getFromID(),_msg.getType(),_msg.getMsg());
+    sprintf(sql,"insert into offlineMsg(_toID,_fromID,_type,_msg) values(%d,%d,%d,'%s',);",_msg.getToID(),_msg.getFromID(),_msg.getType(),_msg.getMsg());
 
     MYSQL_DB* conn=DBconnPool::instance()->getConn();
     int _state=conn->update(sql);

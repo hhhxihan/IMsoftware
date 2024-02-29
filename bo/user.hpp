@@ -6,9 +6,9 @@ using namespace std;
 class user{
     public:
 
-    void setId(const int &id) {  _userID = id; }
-    void setName(const std::string &name) { _name = name; }
-    void setPassword(const std::string &paw) { _password = paw; }
+    void setId(const int &&id) {  _userID = id; }
+    void setName(const std::string &&name) { _name = name; }
+    void setPassword(const std::string &p&aw) { _password = paw; }
     void setState(int state) { _state = state; }
 
     int getId() { return _userID; }

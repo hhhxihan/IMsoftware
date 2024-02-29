@@ -24,7 +24,7 @@ bool DBconnPool::init(int num){
             cout<<"MYSQL_DB create  failed!"<<endl;
             return false;
         } 
-        if(!db->connect(_serverIP.c_str(),_username.c_str(),_password.c_str(),NULL,_port)) {//连接失败
+        if(!db->connect(_serverIP.c_str(),_username.c_str(),_password.c_str(),"IM",_port)) {//连接失败
             cout<<"connect failed!"<<endl;
             return false;
         } 

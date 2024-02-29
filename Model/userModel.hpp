@@ -12,6 +12,7 @@ class userModel{
         bool insert(user& _user);
         user query(int id);
         user query(string name);
+        bool query(user& _user);
         bool update(user& _user);
 
 };

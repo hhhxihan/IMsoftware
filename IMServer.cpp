@@ -34,9 +34,35 @@ void IMServer::HandlerMsg(struct bufferevent* bev,void* arg){
         cout<<"command errno"<<endl;
     }
     delete[] charPtr;
+    cout<<"handler process normol"<<endl;
 }
 void IMServer::LoginHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
   cout<<"handler Login msg"<<endl;
+    try {
+        // auto bufPtr = std::shared_ptr<char[size2]>(); //C++20 以上支持
+        char* buf = new char[100];
+        if(buf==nullptr){
+            cout<<"IMServer.cpp 47:create buf failed"<<endl;
+        }
+        readMsgPkg(bev,buf,msgHeadPtr);
+
+        LOGINmsg* signupPtr=reinterpret_cast<LOGINmsg*>(buf);
+        user _user;
+        _user.setName(signupPtr->username);
+        _user.setPassword(signupPtr->pwd);
+
+        int _state=_userModel.query(_user);
+        
+        if(_state){ //
+            string msg=std::to_string(_user.getId());    
+            respondMsg(bev,true,msg);
+        }
+        delete[] buf;
+    }
+    catch (const std::bad_alloc& e) {
+        cout << "IMServer.cpp: create buf failed: " << e.what() << endl;
+    }
+    cout<<"signup success!"<<endl;
 }
 
 
@@ -48,7 +74,6 @@ void IMServer::SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
         if(buf==nullptr){
             cout<<"IMServer.cpp 47:create buf failed"<<endl;
         }
-        cout<<"buf ???"<<endl;
         readMsgPkg(bev,buf,msgHeadPtr);
 
         SIGNUPmsg* signupPtr=reinterpret_cast<SIGNUPmsg*>(buf);
@@ -58,13 +83,14 @@ void IMServer::SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
 
         int _state=_userModel.insert(_user);
         if(_state){
-            cout<<"Signup success : username:"<<_user.getName()<<endl;
+            respondMsg(bev,true,std::to_string(_user.getId()));
         }
         delete[] buf;
     }
     catch (const std::bad_alloc& e) {
         cout << "IMServer.cpp: create buf failed: " << e.what() << endl;
     }
+    cout<<"signup success!"<<endl;
     
 }
 

@@ -13,3 +13,12 @@ bool readMsgPkg(struct bufferevent* bev,char* buf,MSGHEAD* msgHeadPtr){
     }
     return true;
 }
+
+void respondMsg(struct bufferevent* bev,bool success,std::string _msg){ //回复消息
+    _respondMsg rsp;
+    rsp.code=success;
+    memcpy(rsp.msg,_msg.c_str(),sizeof(rsp.msg));
+
+    char buf[sizeof(rsp)];
+    bufferevent_write(bev,buf,sizeof(buf));
+}

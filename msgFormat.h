@@ -27,7 +27,7 @@ struct SIGNUPmsg{
 }; //8
 
 struct LOGINmsg{
-    int userID;
+    char username[32];;
     char pwd[32];
 };
 
@@ -48,6 +48,10 @@ struct GetFriendMsg{
     int userID;
 };
 
+struct _respondMsg{
+    bool code;
+    char msg[32];
+};
 
 
 #endif
