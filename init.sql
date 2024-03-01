@@ -4,11 +4,11 @@ USE IM;
 DROP TABLE IF exists user;
 
 CREATE TABLE user(
-    _id int(9) AUTO_INCREMENT PRIMARY KEY,
+    _id int(9) ZEROFILL AUTO_INCREMENT PRIMARY KEY,
     _username varchar(32) NOT NULL,
     _password varchar(32) NOT NULL,
     _state int
- );
+ ) AUTO_INCREMENT = 100000000;
 
 DROP TABLE IF exists offlinemsg;
 

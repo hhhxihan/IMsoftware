@@ -55,7 +55,7 @@ void IMServer::LoginHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
         
         if(_state){ //
             string msg=std::to_string(_user.getId());    
-            respondMsg(bev,true,msg);
+            respondMsg(bev,1,msg);
         }
         delete[] buf;
     }
@@ -72,7 +72,7 @@ void IMServer::SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
         // auto bufPtr = std::shared_ptr<char[size2]>(); //C++20 以上支持
         char* buf = new char[100];
         if(buf==nullptr){
-            cout<<"IMServer.cpp 47:create buf failed"<<endl;
+            cout<<"IMServer.cpp 75:create buf failed"<<endl;
         }
         readMsgPkg(bev,buf,msgHeadPtr);
 
@@ -83,7 +83,8 @@ void IMServer::SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr){
 
         int _state=_userModel.insert(_user);
         if(_state){
-            respondMsg(bev,true,std::to_string(_user.getId()));
+            string ts=std::to_string(_user.getId());
+            respondMsg(bev,1,ts);
         }
         delete[] buf;
     }

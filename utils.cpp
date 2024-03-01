@@ -14,11 +14,17 @@ bool readMsgPkg(struct bufferevent* bev,char* buf,MSGHEAD* msgHeadPtr){
     return true;
 }
 
-void respondMsg(struct bufferevent* bev,bool success,std::string _msg){ //回复消息
+void respondMsg(struct bufferevent* bev,int success,std::string _msg){ //回复消息
     _respondMsg rsp;
     rsp.code=success;
-    memcpy(rsp.msg,_msg.c_str(),sizeof(rsp.msg));
+    memcpy(rsp.msg,_msg.c_str(),_msg.size());
+    rsp.msg[_msg.size()+1]='\0';
 
-    char buf[sizeof(rsp)];
-    bufferevent_write(bev,buf,sizeof(buf));
+    char* buf=new char[sizeof(rsp)];
+    memset(buf,0,sizeof(rsp));
+    std::cout << "rsp.code: " << rsp.code << " rsp.msg: " << rsp.msg <<" rsp.size:"<<sizeof(rsp)<<std::endl;
+
+    memcpy(buf,&rsp,sizeof(rsp));
+    bufferevent_write(bev,buf,sizeof(rsp));
+    delete[] buf;
 }

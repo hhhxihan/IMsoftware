@@ -49,7 +49,7 @@ struct GetFriendMsg{
 };
 
 struct _respondMsg{
-    bool code;
+    int code;
     char msg[32];
 };
 

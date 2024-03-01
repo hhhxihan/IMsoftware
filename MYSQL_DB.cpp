@@ -13,7 +13,12 @@ bool MYSQL_DB::connect(const char* host,const char* user,const char* password,co
 }
 
 MYSQL_RES* MYSQL_DB::query(string sql){
-
+    int _state=mysql_query(conn,sql.c_str());
+    if(_state){
+        cout<<"MYSQL_BD:query faild"<<endl;
+        return nullptr;
+    }
+    return mysql_store_result(conn);
 }
 
 int MYSQL_DB::update(string sql){
