@@ -18,7 +18,7 @@ void IMThread::addTask(evutil_socket_t fd,short events,void* arg){
         cout<<"bufferevent create failed!"<<endl;
         return ;
     }
-    bufferevent_setcb(bev,IMServer::HandlerMsg,NULL,NULL,NULL);
+    bufferevent_setcb(bev,IMServer::HandlerMsg,NULL,NULL,arg);
     bufferevent_enable(bev,EV_READ);
 }
 
@@ -44,5 +44,12 @@ bool IMThread::init(){
     th.detach();
 
     return true;
+}
+void IMThread::addRedisEvent(redisContext* context,string _cmd){
+    redisLibeventAttach(context, base);
+    context->ev.data = base;
+
+    redisAsyncCommand(context, IMServer::messageCallback, nullptr, _cmd.c_str());
+    cout<<"Add redis event success!"<<endl;
 }
 

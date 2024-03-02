@@ -20,7 +20,7 @@ bool userModel::insert(user& _user){
     return true;
 }
 
-bool userModel::query(user& _user){
+bool userModel::query(user& _user){ 
     MYSQL_DB* conn=DBconnPool::instance()->getConn();
     char sql[maxsize]={0};
     _user.setState(1);
@@ -30,6 +30,7 @@ bool userModel::query(user& _user){
     if(_res){
         MYSQL_ROW row=mysql_fetch_row(_res);
         _user.setId(std::stoi(row[0]));
+        _user.setState(std::stoi(row[3]));
         cout<<"userID is:"<<_user.getId()<<endl;   
     }
     DBconnPool::instance()->giveBack(conn);
@@ -40,4 +41,20 @@ bool userModel::query(user& _user){
     }
     
     return true;
+ }
+ bool userModelqueryIfLogged(int id){
+    MYSQL_DB* conn=DBconnPool::instance()->getConn();
+    char sql[maxsize]={0};
+    sprintf(sql,"select _state from user where _id=%d;",id);
+    cout<<sql<<endl;
+    MYSQL_RES* _res=conn->query(sql);
+    if(_res){
+        MYSQL_ROW row=mysql_fetch_row(_res);
+        if(std::stoi(row[0])==ISLOGGEDIN){
+            DBconnPool::instance()->giveBack(conn);
+            return true;
+        }  
+    }
+    DBconnPool::instance()->giveBack(conn);
+    return false;
  }

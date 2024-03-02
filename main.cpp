@@ -7,6 +7,7 @@ string DBIP("127.0.0.1");
 int DB_port=3306;
 string DB_username("usr");
 string _password("123456");
+int port=8000;
 
 
 
@@ -15,8 +16,12 @@ void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockad
    cout<<fd<<endl;
    ThreadPool::instance()->addTask(fd);
 }
-int main()
+int main(int argc, char* argv[])
 {
+    if(argc==2){
+        port=std::stoi(argv[1]);//设置监听的端口
+    }
+
     DBconnPool::instance()->init(5);
     DBconnPool::instance()->setServer(DBIP,DB_username,_password,DB_port);
 
@@ -30,7 +35,7 @@ int main()
      //设置服务器的地址信息
     struct sockaddr_in server_addr;
     server_addr.sin_addr.s_addr=INADDR_ANY;
-    server_addr.sin_port=htons(8001);
+    server_addr.sin_port=htons(port);
     server_addr.sin_family=AF_INET;
 
     struct evconnlistener* ev=evconnlistener_new_bind(base,callback,NULL, LEV_OPT_REUSEABLE,100,
@@ -39,7 +44,7 @@ int main()
         cout << "evconnlistener create failed: " << evutil_socket_error_to_string( evutil_socket_geterror()) << endl;
     }
 
-    cout<<"start listen..."<<endl;
+    cout<<"start listen "<<port<<endl;
     event_base_dispatch(base);
     
     evconnlistener_free(ev);

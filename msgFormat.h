@@ -14,6 +14,11 @@ enum CMD{
     SENDMSGTOG
 };
 
+enum USER_STATE{
+    ISLOGGEDIN=1,
+    NOTLOGGEDON
+};
+
 struct MSGHEAD{
     char version;
     enum CMD command;

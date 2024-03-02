@@ -12,7 +12,7 @@ class IMThread{
     public:
     bool init();
     stack<int> fdStack;
-    
+    void addRedisEvent(redisContext* context,string _cmd);
     static void addTask(evutil_socket_t fd,short events,void* arg);
     int pipefd[2];
     private:

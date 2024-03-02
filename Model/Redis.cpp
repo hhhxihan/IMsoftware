@@ -19,12 +19,14 @@ void Redis::subscribe(int channel){
     redisReply* reply=redisCommand(context,"subsribe %d",channel);
     if(reply==nullptr){
         
+        return ;
     }
 }
 void Redis::publish(int channel,string msg){
     redisReply* reply=redisCommand(context,"publis %d %s",channel,msg.c_str());
     if(reply==nullptr){
         
+        return ;
     }
 }
 void Redis::unsubscrite(int channel){

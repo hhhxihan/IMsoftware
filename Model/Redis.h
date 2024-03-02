@@ -7,6 +7,10 @@ using namespace std;
 
 class Redis{
     public:
+    static Redis* instance(){
+        static Redis _redis;
+        return &_redis;
+    }
     void subscribe(int channel);
     void publish(int channel,string msg);
     void unsubscrite(int channel);

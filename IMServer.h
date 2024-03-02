@@ -15,6 +15,8 @@
 #include "utils.h"
 #include <event2/event.h>
 #include <event2/bufferevent.h>
+#include "Redis.h"
+#include "IMThread.hpp"
 #include "json.hpp"
 using json=nlohmann::json;
 using namespace std;
@@ -35,7 +37,7 @@ class IMServer{
             return singleInstance;
         }
         static void HandlerMsg(struct bufferevent* bev,void* arg);
-        void LoginHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
+        void LoginHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr,void* arg);
         void SignupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
         void addFriendHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
         void addGroupHandler(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
@@ -43,7 +45,10 @@ class IMServer{
         void sendMsgToGrp(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
         void createGrpHdl(struct buffervent* bev,MSGHEAD* msgHeadPtr);
         void getFriendMSg(struct bufferevent* bev,MSGHEAD* msgHeadPtr);
+        void messageCallback(redisAsyncContext *c, void *reply, void *privdata); //redis订阅触发的事件
         IMServer();
+
+        
     private:
         static IMServer* singleInstance;
         unordered_map<CMD,HandleFunc> handlerMap; 
@@ -53,8 +58,8 @@ class IMServer{
         userModel _userModel;  //用户信息数据库
         offlineMsgModel _offlineMsgModel; //离线消息数据库
         friendModel _friendModel;
-
-
+        Redis _redis;
+        
 };
 
 #endif
