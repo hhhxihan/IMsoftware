@@ -47,20 +47,33 @@ make
 
 #### Friend表：
 
-| 字段名称  | 类型 | 说明         | 约束                        |
-| --------- | ---- | ------------ | --------------------------- |
-| _id       | int  | 唯一标识     | PRIMARY KEY，AUTO_INCREMENT |
-| _userID   | int  | 用户id       | FOREIGN KEY                 |
-| _friendID | int  | 好友id       | FOREIGN KEY                 |
-| _state    | int  | 好友关系状态 | NOT NULL                    |
+用户好友表
+
+| 字段名称  | 类型        | 说明         | 约束                        |
+| --------- | ----------- | ------------ | --------------------------- |
+| _id       | int         | 唯一标识     | PRIMARY KEY，AUTO_INCREMENT |
+| _userID   | int         | 用户id       | FOREIGN KEY，INDEX          |
+| _friendID | int         | 好友id       | FOREIGN KEY                 |
+| _state    | int         | 好友关系状态 | NOT NULL                    |
+| _Name     | varchar(30) | 备注昵称     | default null                |
+| _Group    | int         | 所属分组     | FOREIGN KEY                 |
+
+不足：
+
+- 存在冗余存储的问题，A与B的好友关系，需要两条记录存储
+- 查询某用户的所有好友时，需要读取数据页的次数较多（_userID相同的数据过于分散）
+
+
 
 #### OfflineMsg表：
 
-| 字段名称 | 类型 | 说明     | 约束        |
-| -------- | ---- | -------- | ----------- |
-| _id      | int  | 消息标识 | NOT NULL    |
-| _fromID  | int  | 发送者id | FOREIGN KEY |
-| _toID    | int  | 接受者id | FOREIGN KEY |
+| 字段名称 | 类型 | 说明     | 约束                     |
+| -------- | ---- | -------- | ------------------------ |
+| _id      | int  | 消息标识 | NOT NULL，AUTO_INCREMENT |
+| _fromID  | int  | 发送者id | FOREIGN KEY              |
+| _toID    | int  | 接受者id | FOREIGN KEY              |
+| MsgID    | int  | 消息id   | NOT NULL                 |
+| time     | date | 时间     | NOT NULL                 |
 
 
 
@@ -76,3 +89,7 @@ TCP协议是数据流协议，底层根据二进制缓冲区的实际情况进�
 | code    | 整数     | 应答结果代码       |
 | version | 整数     | 请求发起方程序版本 |
 | len     | int      | 负载大小           |
+
+
+
+#### 文档待完善......
